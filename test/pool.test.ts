@@ -3,18 +3,19 @@ import * as chaiAsPromised from "chai-as-promised";
 import {assert} from "chai";
 import * as path from "path";
 import {Pool} from "../src";
-import {Person} from "./fixtures/services/types";
+import * as s from "./support";
 
 chai.use(chaiAsPromised);
+
+const entry = require(s.fixture('simple'));
 
 describe('workerpool', () => {
 
   let pool: Pool;
 
   before(() => {
-    pool = new Pool({
+    pool = new Pool(s.fixture('simple'), {
       enabled: true,
-      file: path.resolve(__dirname, './fixtures/services/entry')
     });
   });
 
@@ -28,13 +29,13 @@ describe('workerpool', () => {
   });
 
   it('should rpc method with custom object codec', async () => {
-    const result = await pool.execute("greet", new Person('Tom'));
+    const result = await pool.execute("greet", new entry.Person('Tom'));
     assert.equal(result, 'Hello Tom');
   });
 
   it('should return a custom object with codec', async () => {
     const result = await pool.execute("person", 'Tom');
-    assert.instanceOf(result, Person);
+    assert.instanceOf(result, entry.Person);
   });
 
   it("should throw error for incorrect method", async () => {

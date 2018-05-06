@@ -1,21 +1,21 @@
 import * as path from "path";
 import {assert} from "chai";
 import {MsgpackFramer, Service, Child} from "../../src/index";
-import {throwError} from "../support";
-import {Person} from "../fixtures/services/types";
+import * as s from "../support";
+
+const entry = require(s.fixture('simple'));
 
 describe('pipes/child', () => {
 
   let client: Service;
 
   before(() => {
-    const entry = require('../fixtures/services/entry');
     const framer = new MsgpackFramer(entry);
     const pipe = new Child(path.resolve(__dirname, '../fixtures/services/entry'));
-    pipe.on('error', throwError);
+    pipe.on('error', s.throwError);
 
     client = new Service({framer, pipe});
-    client.on('error', throwError);
+    client.on('error', s.throwError);
   });
 
   after(async () => {
@@ -28,13 +28,13 @@ describe('pipes/child', () => {
   });
 
   it('should rpc method with custom object codec', async () => {
-    const result = await client.request("greet", new Person('Tom'));
+    const result = await client.request("greet", new entry.Person('Tom'));
     assert.equal(result, 'Hello Tom');
   });
 
   it('should return a custom object with codec', async () => {
     const result = await client.request("person",'Tom');
-    assert.instanceOf(result, Person);
+    assert.instanceOf(result, entry.Person);
   });
 
 });

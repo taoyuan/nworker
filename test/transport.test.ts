@@ -1,6 +1,6 @@
 import {assert} from "chai";
 import {Transport} from "../src/transport";
-import {Pipe} from "./fixtures/pipe";
+import {Pipe} from "./mocks/pipe";
 
 describe('transport', () => {
   it('should work', (done) => {

@@ -1,14 +1,15 @@
 import {assert} from "chai";
 import {MsgpackFramer, Service} from '../src';
-import {Pipe} from "./fixtures/pipe";
+import {Pipe} from "./mocks/pipe";
 import {throwError} from "./support";
-import {Person} from "./fixtures/services/types";
+import * as s from "./support";
+
+const entry = require(s.fixture('simple'));
 
 describe('service', () => {
   let ss, cs: Service;
 
   before(() => {
-    const entry = require('./fixtures/services/entry');
     const framer = new MsgpackFramer(entry);
 
     const sp = new Pipe();
@@ -34,12 +35,12 @@ describe('service', () => {
   });
 
   it('should rpc method with custom object codec', async () => {
-    const result = await cs.request("greet", new Person('Tom'));
+    const result = await cs.request("greet", new entry.Person('Tom'));
     assert.equal(result, 'Hello Tom');
   });
 
   it('should return a custom object', async () => {
     const result = await cs.request("person", 'Tom');
-    assert.instanceOf(result, Person);
+    assert.instanceOf(result, entry.Person);
   });
 });

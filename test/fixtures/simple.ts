@@ -1,4 +1,15 @@
-import {Person} from "./types";
+export class Person {
+  constructor(public name: string) {
+  }
+
+  static pack(p: Person, encode) {
+    return encode(p.name);
+  }
+
+  static unpack(input: Buffer, decode) {
+    return new Person(decode(input));
+  }
+}
 
 export function sum(...params: number[]): number {
   let result = 0;
@@ -15,3 +26,10 @@ export function person(name: string) {
 export function greet(person: Person) {
   return 'Hello ' + person.name;
 }
+
+export const types = [Person];
+export const methods = {
+  sum,
+  person,
+  greet
+};
