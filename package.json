@@ -22,7 +22,8 @@
     "build": "npm run clean && echo Using TypeScript && tsc --version && tsc --pretty",
     "test": "npm run build && mocha --recursive \"lib/test/**/*.test.js\"",
     "watch": "npm run build -- --watch",
-    "watch:test": "npm run test -- --watch"
+    "watch:test": "npm run test -- --watch",
+    "benchmark": "cd benchmark; npm install; npm test;"
   },
   "dependencies": {
     "msgpack-lite": "^0.1.26"
