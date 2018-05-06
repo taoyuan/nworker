@@ -1,0 +1,50 @@
+{
+  "name": "nworker",
+  "version": "0.1.0",
+  "description": "A node.js library to run cpu-intensive tasks in a separate processes and not block the event loop.",
+  "license": "Apache-2.0",
+  "repository": "https://www.github.com/taoyuan/nworker",
+  "author": {
+    "name": "taoyuan",
+    "email": "taoyuan@outlook.com"
+  },
+  "keywords": [
+    "worker",
+    "pool"
+  ],
+  "engines": {
+    "node": ">=6.6.0"
+  },
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib src/**/*.js test/**/*.js",
+    "build": "npm run clean && echo Using TypeScript && tsc --version && tsc --pretty",
+    "test": "npm run build && mocha --recursive \"lib/test/**/*.test.js\"",
+    "watch": "npm run build -- --watch",
+    "watch:test": "npm run test -- --watch"
+  },
+  "dependencies": {
+    "msgpack-lite": "^0.1.26"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.3",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/mocha": "^5.2.0",
+    "@types/msgpack-lite": "^0.1.6",
+    "@types/node": "^9.6.6",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.1.1",
+    "rimraf": "^2.6.2",
+    "typescript": "^2.8.3"
+  },
+  "files": [
+    "README.md",
+    "index.js",
+    "index.d.ts",
+    "lib*/src",
+    "lib*/index*",
+    "src"
+  ]
+}
