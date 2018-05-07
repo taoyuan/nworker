@@ -1,6 +1,16 @@
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
+import * as uniq from 'lodash.uniq';
 import {Pool} from "../src";
 
+
+chai.use(chaiAsPromised);
+
 const pools: Array<Pool> = [];
+
+export function unique(...args) {
+  return uniq(...args);
+}
 
 export function wait(delay: number) {
   return new Promise(resolve => setTimeout(resolve, delay))
@@ -25,4 +35,9 @@ export async function close() {
     const pool = pools.pop();
     pool && await pool.close();
   }
+}
+
+export async function repeat(times, fn) {
+  const arr = new Array(times).fill(0);
+  return Promise.all(arr.map(() => fn()));
 }

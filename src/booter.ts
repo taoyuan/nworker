@@ -27,23 +27,19 @@ export class Booter extends EventEmitter {
     });
   }
 
-  async boot() {
+  boot() {
+    const framer = new MsgpackFramer({preset: true});
+    const transport = new Transport(this.parent);
+    this.service = new Service({framer, transport});
+
     let entry: any = require(this.entryfile);
     if (typeof entry === 'function') {
-      entry = await entry();
+      entry = entry();
     }
 
-    const framer = new MsgpackFramer({
-      types: entry.types,
-      codec: {
-        preset: true
-      }
-    });
-
-    const transport = new Transport(this.parent);
-
-    this.service = new Service({framer, transport});
-    this.service.methods(entry.methods);
+    // register customized codecs
+    framer.register(entry.codecs);
+    this.service.methods(entry.methods || entry);
 
     this.on('error', (err) => {
       this.service.signal('error', err);

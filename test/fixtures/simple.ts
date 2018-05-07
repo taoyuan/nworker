@@ -27,9 +27,4 @@ export function greet(person: Person) {
   return 'Hello ' + person.name;
 }
 
-export const types = [Person];
-export const methods = {
-  sum,
-  person,
-  greet
-};
+export const codecs = [Person];

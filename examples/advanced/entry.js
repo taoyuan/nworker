@@ -18,15 +18,8 @@ class Person {
   }
 }
 
-function createPerson(name) {
-  return new Person(name);
-}
+// custom types for encoding and decoding
+exports.codecs = [Person];
 
-module.exports = {
-  // custom types for encoding and decoding
-  types: [Person],
-  // worker methods for remote calling
-  methods: {
-    createPerson,
-  }
-};
+exports.createPerson = name => new Person(name);
+

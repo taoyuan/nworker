@@ -1,49 +1,51 @@
-import {Framer} from "../framer";
-import {Codec, CodecOptions, DecoderOptions, EncoderOptions} from "msgpack-lite";
+import {Codec, Framer} from "../framer";
 import * as msgpack from "msgpack-lite";
-
-export interface MsgpackFramerOptions {
-  codec?: CodecOptions
-  types?: Array<any>
-}
+import {CodecOptions, DecoderOptions, EncoderOptions} from "msgpack-lite";
 
 export class MsgpackFramer implements Framer {
 
-  codec: Codec;
+  protected registry: msgpack.Codec;
 
   get encoderOptions(): EncoderOptions {
-    return {codec: this.codec};
+    return {codec: this.registry};
   }
 
   get decoderOptions(): DecoderOptions {
-    return {codec: this.codec};
+    return {codec: this.registry};
   }
 
-  constructor(protected options: MsgpackFramerOptions = {}) {
-    this.codec = msgpack.createCodec(options.codec);
-    if (options) {
-      this.init();
-    }
+  constructor(protected options: CodecOptions = {}) {
+    options = Object.assign({preset: true}, options);
+    this.registry = msgpack.createCodec(options);
   }
 
-  protected init() {
-    const {codec, options} = this;
-    let {types} = options;
-    if (types && !Array.isArray(types)) {
-      types = Object.values(types);
+  register(codecs: Array<Codec<any>>) {
+    if (codecs && !Array.isArray(codecs)) {
+      codecs = Object.values(codecs);
     }
+    if (!codecs || !codecs.length) {
+      return;
+    }
+    for (let i = 0; i < codecs.length; i++) {
+      const c = codecs[i];
+      if (!c) continue;
 
-    if (types && types.length) {
-      types.forEach((item, index) => {
-        const etype = 0x30 + (item.type || item.etype || index);
-        const clazz = typeof item === 'function' ? item : item.clazz;
-        if (item.pack) {
-          codec.addExtPacker(etype, clazz, (input) => item.pack(input, (input) => msgpack.encode(input, this.encoderOptions)));
-        }
-        if (item.unpack) {
-          codec.addExtUnpacker(etype, (input) => item.unpack(input, (input) => msgpack.decode(input, this.decoderOptions)));
-        }
-      });
+      const etype = 0x30 + (c.etype || i);
+      let clazz;
+      if (c.clazz && isConstructor(c.clazz)) {
+        clazz = c.clazz;
+      } else if (isConstructor(c)) {
+        clazz = c;
+      } else {
+        throw new Error('invalid codec');
+      }
+
+      if (c.pack) {
+        this.registry.addExtPacker(etype, clazz, (input) => c.pack(input, (input) => msgpack.encode(input, this.encoderOptions)));
+      }
+      if (c.unpack) {
+        this.registry.addExtUnpacker(etype, (input) => c.unpack(input, (input) => msgpack.decode(input, this.decoderOptions)));
+      }
     }
   }
 
@@ -54,4 +56,15 @@ export class MsgpackFramer implements Framer {
   decode(input: Buffer | Uint8Array | number[]): any {
     return msgpack.decode(input, this.decoderOptions);
   }
+}
+
+function isConstructor(f) {
+  try {
+    new f();
+  } catch (err) {
+    if (err.message.indexOf('is not a constructor') >= 0) {
+      return false;
+    }
+  }
+  return true;
 }

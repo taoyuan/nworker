@@ -10,7 +10,8 @@ describe('service', () => {
   let ss, cs: Service;
 
   before(() => {
-    const framer = new MsgpackFramer(entry);
+    const framer = new MsgpackFramer();
+    framer.register(entry.codecs);
 
     const sp = new Pipe();
     const cp = new Pipe();
@@ -21,7 +22,7 @@ describe('service', () => {
     ss.on('error', throwError);
     cs.on('error', throwError);
 
-    ss.methods(entry.methods);
+    ss.methods(entry);
   });
 
   after(async () => {

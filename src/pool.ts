@@ -76,18 +76,23 @@ export class Pool extends EventEmitter {
 
     assert(this.file);
 
-    this.entry = require(this.file);
+    let entry: any = require(this.file);
+    if (typeof entry === 'function') {
+      entry = entry();
+    }
+    this.entry = entry;
 
+    // builtin calling provider
     this.provider = new Provider();
-    this.provider.methods(this.entry.methods);
+    this.provider.methods(this.entry.methods || this.entry);
 
-    const framerOptions = options.framer || {types: this.entry.types};
-
-    if (framerOptions != null) {
-      // TODO create framer according to framer type
-      const {type, ...opts} = framerOptions;
-      const o = Object.assign({codec: {preset: true}}, opts);
-      this.framer = new MsgpackFramer(o);
+    const fo = options.framer || {};
+    this.framer = new MsgpackFramer({preset: true});
+    if (fo.codecs) {
+      this.framer.register(fo.codecs);
+    }
+    if (entry.codecs) {
+      this.framer.register(entry.codecs);
     }
   }
 

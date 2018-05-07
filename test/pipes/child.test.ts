@@ -1,4 +1,3 @@
-import * as path from "path";
 import {assert} from "chai";
 import {MsgpackFramer, Service, Child} from "../../src/index";
 import * as s from "../support";
@@ -10,8 +9,9 @@ describe('pipes/child', () => {
   let client: Service;
 
   before(() => {
-    const framer = new MsgpackFramer(entry);
-    const pipe = new Child(path.resolve(__dirname, '../fixtures/services/entry'));
+    const framer = new MsgpackFramer();
+    framer.register(entry.codecs);
+    const pipe = new Child(s.fixture('simple'));
     pipe.on('error', s.throwError);
 
     client = new Service({framer, pipe});
