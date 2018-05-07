@@ -1,6 +1,6 @@
 {
   "name": "nworker",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A node.js library to run cpu-intensive tasks in a separate processes and not block the event loop.",
   "license": "Apache-2.0",
   "repository": "https://github.com/taoyuan/nworker",
