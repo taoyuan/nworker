@@ -8,7 +8,7 @@ function memMeasure() {
 
 memMeasure();
 
-exports.methods = {
+module.exports = {
   renderHTML(pageDescription) {
     return {
       html: JSON.stringify(pageDescription) + data,
