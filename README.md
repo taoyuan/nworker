@@ -45,7 +45,7 @@ const pool = new Pool(require.resolve('./entry'), {
 ```
 
 ### Advanced
-Advanced examples see [examples](nworker/tree/master/examples)
+Advanced examples see [examples](examples)
 
 ## Benchmarks
 
