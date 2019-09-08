@@ -1,5 +1,7 @@
 # nworker
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/taoyuan/nworker.svg)](https://greenkeeper.io/)
+
 > A node.js library to run cpu-intensive tasks in a separate processes and not block the event loop.
 
 ## Install
